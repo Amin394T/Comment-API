@@ -46,7 +46,7 @@ export async function createMessage(req, res) {
 
     const message = await Message.create({ user: username, content, parent });
 
-    res.status(201).json(message);
+    res.status(201).json({ code: 39, ...message.dataValues });
   } catch (error) {
     res.status(400).json({ code: 30, message: error.message });
   }
@@ -78,7 +78,7 @@ export async function updateMessage(req, res) {
     message.date = new Date();
     await message.save();
 
-    res.status(200).json(message);
+    res.status(200).json({ code: 59, ...message.dataValues });
   } catch (error) {
     res.status(400).json({ code: 50, message: error.message });
   }
@@ -108,7 +108,7 @@ export async function deleteMessage(req, res) {
     message.date = new Date();
     await message.save();
 
-    res.status(200).json(message);
+    res.status(200).json({ code: 69, ...message.dataValues });
   } catch (error) {
     res.status(400).json({ code: 60, message: error.message });
   }
