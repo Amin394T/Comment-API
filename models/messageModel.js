@@ -27,7 +27,7 @@ const Message = sequelize.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("normal", "edited", "removed", "blocked"),
+      type: DataTypes.ENUM("normal", "edited", "removed", "orphan", "blocked"),
       defaultValue: "normal",
     }
   },

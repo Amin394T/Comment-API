@@ -23,7 +23,7 @@ export async function readMessages(req, res) {
     const messages = await Message.findAll({
       where: {
         parent: req.params.id,
-        status: { [Op.notIn]: ["removed", "blocked"] },
+        status: { [Op.in]: ["normal", "edited"] },
       },
     });
 
@@ -107,6 +107,14 @@ export async function deleteMessage(req, res) {
       : message.status = "blocked";
     message.date = new Date();
     await message.save();
+
+    await Message.update(
+      { status: "orphan" },
+      { where: { 
+          parent: req.params.id,
+          status: { [Op.in]: ["normal", "edited"] }
+      }}
+    );
 
     res.status(200).json({ code: 69, ...message.dataValues });
   } catch (error) {
