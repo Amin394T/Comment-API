@@ -27,6 +27,16 @@ export async function readMessages(req, res) {
       },
     });
 
+    for (let message of messages) {
+      const replies = await Message.findAll({
+        where: {
+          parent: message.id.toString(),
+          status: { [Op.in]: ["normal", "edited"] },
+        },
+      });
+      message.setDataValue('replies', replies);
+    }
+
     res.status(200).json(messages);
   } catch (error) {
     res.status(400).json({ code: 40, message: error.message });
@@ -38,7 +48,7 @@ export async function createMessage(req, res) {
     const { username, password, content, parent } = req.body;
 
     if (!content)
-      return res.status(400).json({ code: 34, message: "Comment is Empty!" });
+      return res.status(422).json({ code: 34, message: "Comment is Empty!" });
     
     const authorization = await authorizeUser(username, password);
     if (authorization.code != 0)
@@ -57,7 +67,7 @@ export async function updateMessage(req, res) {
     const { username, password, content } = req.body;
 
     if (!content)
-      return res.status(400).json({ code: 56, message: "Comment is Empty!" });
+      return res.status(422).json({ code: 56, message: "Comment is Empty!" });
 
     const authorization = await authorizeUser(username, password);
     if (authorization.code != 0)
